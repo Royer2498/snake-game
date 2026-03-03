@@ -6,11 +6,12 @@ const restartBtn = document.getElementById('restart');
 const TILE = 20;
 const COLS = canvas.width / TILE;
 const ROWS = canvas.height / TILE;
-let snake, dir, food, score, running, loopId;
+let snake, dir, food, obstacles, score, running, loopId;
 
 function reset() {
   snake = [{x: Math.floor(COLS/2), y: Math.floor(ROWS/2)}];
   dir = {x: 1, y: 0};
+  obstacles = [];
   placeFood();
   score = 0;
   running = true;
@@ -23,6 +24,21 @@ function placeFood() {
     food = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
   } while (snake.some(s => s.x === food.x && s.y === food.y));
 }
+function placeObstacles() {
+  const count = Math.min(score, 5);
+  obstacles = [];
+  for (let i = 0; i < count; i++) {
+    let pos;
+    do {
+      pos = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
+    } while (
+      snake.some(s => s.x === pos.x && s.y === pos.y) ||
+      (food.x === pos.x && food.y === pos.y) ||
+      obstacles.some(o => o.x === pos.x && o.y === pos.y)
+    );
+    obstacles.push(pos);
+  }
+}
 function tick() {
   if (!running) return;
   const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
@@ -30,11 +46,14 @@ function tick() {
   if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) return gameOver();
   // self collision
   if (snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
+  // obstacle collision
+  if (obstacles.some(o => o.x === head.x && o.y === head.y)) return gameOver();
   snake.unshift(head);
   if (head.x === food.x && head.y === food.y) {
     score += 1;
     updateScore();
     placeFood();
+    placeObstacles();
   } else {
     snake.pop();
   }
@@ -46,6 +65,11 @@ function draw() {
   // draw food
   ctx.fillStyle = '#e74c3c';
   ctx.fillRect(food.x * TILE, food.y * TILE, TILE, TILE);
+  // draw obstacles
+  ctx.fillStyle = '#e67e22';
+  for (const o of obstacles) {
+    ctx.fillRect(o.x * TILE, o.y * TILE, TILE, TILE);
+  }
   // draw snake
   for (let i = 0; i < snake.length; i++) {
     ctx.fillStyle = i === 0 ? '#8ef' : '#0f8';
