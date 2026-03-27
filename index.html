@@ -8,6 +8,14 @@
 <body>
     <div class="container">
         <h1>Snake</h1>
+        <div class="difficulty">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy (15×15 · slow)</option>
+                <option value="medium" selected>Medium (20×20)</option>
+                <option value="hard">Hard (25×25 · fast)</option>
+            </select>
+        </div>
         <canvas id="game" width="400" height="400"></canvas>
         <div class="info">
             <span id="score">Score: 0</span>
