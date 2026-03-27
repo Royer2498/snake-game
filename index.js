@@ -10,6 +10,15 @@ const DIFFICULTIES = {
   medium: { cols: 20, rows: 20, tick: 100 },
   hard:   { cols: 25, rows: 25, tick: 65  },
 };
+const PALETTE = {
+  boardA: '#081508',
+  boardB: '#0c1b0c',
+  food: '#ff5f5f',
+  foodCore: '#ffd3d3',
+  snakeHead: '#b6ff5f',
+  snakeBody: '#4fd66f',
+  snakeOutline: '#1f5e30',
+};
 let COLS, ROWS, GAME_TICK_MS;
 let snake, dir, food, score, running, loopId;
 
@@ -64,16 +73,43 @@ function tick() {
   draw();
 }
 function draw() {
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  // draw food
-  ctx.fillStyle = '#e74c3c';
-  ctx.fillRect(food.x * TILE, food.y * TILE, TILE, TILE);
-  // draw snake
+  drawBoard();
+  drawFood();
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = i === 0 ? '#8ef' : '#0f8';
-    ctx.fillRect(snake[i].x * TILE, snake[i].y * TILE, TILE-1, TILE-1);
+    drawSnakeSegment(snake[i], i === 0);
   }
+}
+
+function drawBoard() {
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      ctx.fillStyle = (x + y) % 2 === 0 ? PALETTE.boardA : PALETTE.boardB;
+      ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+    }
+  }
+}
+
+function drawFood() {
+  const x = food.x * TILE;
+  const y = food.y * TILE;
+
+  ctx.fillStyle = PALETTE.food;
+  ctx.fillRect(x + 2, y + 2, TILE - 4, TILE - 4);
+
+  ctx.fillStyle = PALETTE.foodCore;
+  ctx.fillRect(x + 7, y + 7, TILE - 14, TILE - 14);
+}
+
+function drawSnakeSegment(segment, isHead) {
+  const x = segment.x * TILE;
+  const y = segment.y * TILE;
+  const inset = isHead ? 2 : 3;
+
+  ctx.fillStyle = PALETTE.snakeOutline;
+  ctx.fillRect(x + 1, y + 1, TILE - 2, TILE - 2);
+
+  ctx.fillStyle = isHead ? PALETTE.snakeHead : PALETTE.snakeBody;
+  ctx.fillRect(x + inset, y + inset, TILE - (inset * 2), TILE - (inset * 2));
 }
 function updateScore() {
   scoreEl.textContent = 'Score: ' + score;
