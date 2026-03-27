@@ -2,11 +2,15 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const restartBtn = document.getElementById('restart');
+const difficultyEl = document.getElementById('difficulty');
 
 const TILE = 20;
-const GAME_TICK_MS = 100;
-const COLS = canvas.width / TILE;
-const ROWS = canvas.height / TILE;
+const DIFFICULTIES = {
+  easy:   { cols: 15, rows: 15, tick: 150 },
+  medium: { cols: 20, rows: 20, tick: 100 },
+  hard:   { cols: 25, rows: 25, tick: 65  },
+};
+let COLS, ROWS, GAME_TICK_MS;
 let snake, dir, food, score, running, loopId;
 
 function stopGameLoop() {
@@ -22,6 +26,12 @@ function startGameLoop() {
 }
 
 function reset() {
+  const preset = DIFFICULTIES[difficultyEl ? difficultyEl.value : 'medium'] || DIFFICULTIES.medium;
+  COLS = preset.cols;
+  ROWS = preset.rows;
+  GAME_TICK_MS = preset.tick;
+  if (canvas.width !== COLS * TILE) canvas.width = COLS * TILE;
+  if (canvas.height !== ROWS * TILE) canvas.height = ROWS * TILE;
   snake = [{x: Math.floor(COLS/2), y: Math.floor(ROWS/2)}];
   dir = {x: 1, y: 0};
   placeFood();

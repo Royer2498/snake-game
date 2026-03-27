@@ -24,7 +24,7 @@ body {
 }
 
 .container {
-  width: min(100%, 460px);
+  width: min(100%, 560px);
   text-align: center;
   background: var(--panel);
   border: 2px solid var(--panel-border);
@@ -45,6 +45,29 @@ canvas {
   margin: 0 auto;
   border: 2px solid var(--panel-border);
   image-rendering: pixelated;
+  max-width: 100%;
+}
+
+.difficulty {
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+select {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .info {
