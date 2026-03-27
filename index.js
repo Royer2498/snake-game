@@ -4,9 +4,22 @@ const scoreEl = document.getElementById('score');
 const restartBtn = document.getElementById('restart');
 
 const TILE = 20;
+const GAME_TICK_MS = 100;
 const COLS = canvas.width / TILE;
 const ROWS = canvas.height / TILE;
 let snake, dir, food, score, running, loopId;
+
+function stopGameLoop() {
+  if (loopId) {
+    clearInterval(loopId);
+    loopId = null;
+  }
+}
+
+function startGameLoop() {
+  stopGameLoop();
+  loopId = setInterval(tick, GAME_TICK_MS);
+}
 
 function reset() {
   snake = [{x: Math.floor(COLS/2), y: Math.floor(ROWS/2)}];
@@ -15,8 +28,8 @@ function reset() {
   score = 0;
   running = true;
   updateScore();
-  if (loopId) clearInterval(loopId);
-  loopId = setInterval(tick, 100);
+  draw();
+  startGameLoop();
 }
 function placeFood() {
   do {
@@ -57,7 +70,7 @@ function updateScore() {
 }
 function gameOver() {
   running = false;
-  clearInterval(loopId);
+  stopGameLoop();
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
   ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.fillStyle = '#fff';
